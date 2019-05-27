@@ -53,7 +53,7 @@
 ---------------
 
 # 小记
-## [maven项目jar包下载太慢](note/maven项目jar包下载太慢.md)
+- [maven项目jar包下载太慢](note/maven项目jar包下载太慢.md)
 
 
 
