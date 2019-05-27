@@ -1,12 +1,6 @@
 **ChenPengNotes**
 
-# 📕 hadoop
-
-## HDFS的整体工作机制介绍 ✔
-![读取文件](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190527194011.png)
-
-![写入文件](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190527194112.png)
----------------
+# 📕 hadoop	
 
  **[✒01_Hadoop集群搭建](01.md)**		
 
@@ -36,5 +30,11 @@
  
 
 
+
+
+## HDFS的整体工作机制介绍 ✔
+![读取文件](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190527194011.png)
+
+![写入文件](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190527194112.png)
 
 
