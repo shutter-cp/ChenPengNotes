@@ -22,12 +22,27 @@
 
   **[✒spark入门与搭建](01.md)**		
 
-  **[✒RDD弹性分布式数据集](01.md)**	
+  **[✒RDD弹性分布式数据集](02.md)**	
 
-  **[✒自定义排序_JdbcRDD](01.md)**	
+  **[✒自定义排序_JdbcRDD](03.md)**	
 
-  **[✒Spark任务执行的流程](01.md)**	
+  **[✒Spark任务执行的流程](04.md)**	
 
-  **[✒](01.md)**	
+  **[✒SparkSQL](05.md)**	
 
-  **[✒](01.md)**	
+  **[✒SparkSQL_Join](06.md)**	
+
+  **[✒SparkSQL_UDF](07.md)**	
+
+  **[✒SparkSQL_Hive](08.md)**	
+
+  **[✒SparkOnYarn](09.md)**	
+
+# spark原理
+![spark原理](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190508213424.png)
+
+# RDD排序
+![RDD排序](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190509163933.png)
+
+# spark执行过程
+![spark执行过程](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190509195131.png)

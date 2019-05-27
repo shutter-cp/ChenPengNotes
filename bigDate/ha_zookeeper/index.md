@@ -10,3 +10,8 @@
 
 ## 📕 [配置Hadoop，yarn，spark的高可用](04.md)		
 
+# zookeeper选举原理
+![](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190516232124.png)
+
+# hadoop 高可用原理
+![](https://raw.githubusercontent.com/shutter-cp/imgBed/master/img/20190518032949.png)
