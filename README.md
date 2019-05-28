@@ -1,6 +1,6 @@
 **ChenPengNotes**
 # 🖊 学习笔记 
-- chenpeng个人学习笔记，仅供参考			
+- 个人学习笔记，仅供参考			
 - 如发现任何错漏或问题，请及时反馈给我。谢谢！😀
 - 简书地址：https://www.jianshu.com/u/dc46de5d4777
 - csdn地址：https://blog.csdn.net/qq_30648823
@@ -24,12 +24,14 @@
 - [MongoDB](./bigDate/mongodb/index.md)
 - [Nginx](./bigDate/nginx/index.md)
 - [solr](./bigDate/solr/index.md)
-
+- 更新中📃
 
 
 ## 📕 JavaWEB
+- 更新中📃
 
 ## 📕 WEB前端
+- 更新中📃
 
 ## 📕 微信小程序
 - [01_开发小程序项目](./weChatApplet/01.md)
