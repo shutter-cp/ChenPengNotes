@@ -33,7 +33,10 @@
 	netstat -anpt | grep nginx
 
 
-10. 修改过配置文件之后  
+10. 关闭        
+    ./nginx -s stop
+
+11. 修改过配置文件之后  
     sbin/nginx -s reload //从新加载配置文件
     sbin/nginx -t
 

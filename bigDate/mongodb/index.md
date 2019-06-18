@@ -135,3 +135,253 @@ exit
 // 这里还有几个角色间接或直接提供了系统超级用户的访问（dbOwner 、userAdmin、userAdminAnyDatabase）
 内部角色：__system
 ```
+
+# java使用
+
+## 1. 配置文件
+
+```
+#mongo
+spring.data.mongodb.host=192.169.1.11
+spring.data.mongodb.port=27017
+
+spring.data.mongodb.database=chenpeng
+spring.data.mongodb.username=chenpeng
+spring.data.mongodb.password=root
+```
+
+## 2. bean(user)
+
+```
+//存放在 db.chenpeng.users
+@Document(collection="users")
+public class User {
+
+    //这个字段是id
+    @Id
+    private String id;
+
+    private int status;
+
+    //这个字段创建索引
+
+    @Indexed(unique = true)
+    private String phoneNum;
+
+    private String name;
+
+    private String idNum;
+
+    private double deposit;
+
+    private double balance;
+
+    //这个属性在数据库中不存储
+
+    @Transient
+    private String verifyCode;
+
+    //get set 方法
+    
+}
+```
+
+## 3. demo
+
+```java
+@Service
+public class UserServceImpl implements UserServce {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Override
+    public void genCode(String nationCode, String phoneNum) throws JSONException, IOException, HTTPException {
+        //拿到短信key
+        String appkeys = stringRedisTemplate.opsForValue().get("appkey");
+        //拿到短信id
+        String appid = stringRedisTemplate.opsForValue().get("appid");
+
+        //调用短信接口
+        SmsSingleSender smsSingleSender = new SmsSingleSender(Integer.parseInt(appid), appkeys);
+
+        //产生随机的一个
+        String code = (int) ((Math.random() * 9 + 1) * 1000) + "";
+
+        String[] params = {"8888"};
+        //发送
+        SmsSingleSenderResult send = smsSingleSender.send(0, nationCode, phoneNum, "【吃瓜Studio】您的验证码是："+code+"，2分钟内有效。", "", "");
+
+        System.out.println(send);
+
+        //保存到redis
+        stringRedisTemplate.opsForValue().set(phoneNum,code,120, TimeUnit.SECONDS);
+
+
+    }
+
+    
+    /**
+     * @Author chenpeng
+     * @Description //TODO 判断是否正确
+     * @Date 23:09 
+     * @Param [phoneNum, verifyCode, status, id]
+     * @return boolean
+     **/
+    @Override
+    public boolean verify(String phoneNum, String verifyCode, Integer status, String id) {
+        System.out.println(phoneNum+"  "+verifyCode+"  "+status+"  "+id);
+
+
+        boolean flag = false;
+        String code = stringRedisTemplate.opsForValue().get(phoneNum);
+
+
+        if (verifyCode!=null&&verifyCode.equals(code)){
+            //写入mongodb
+            mongoTemplate.save(new User(status,phoneNum,id));
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    /**
+     * @Author chenpeng
+     * @Description //TODO 交押金
+     * @Date 0:25 
+     * @Param [user]
+     * @return void
+     **/
+    @Override
+    public void deposit(User user) {
+        mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(user.getPhoneNum()))
+        , new Update().set("status", user.getStatus()).set("deposit", user.getDeposit()),
+                User.class);
+    }
+
+    /**
+     * @Author chenpeng
+     * @Description //TODO 身份证
+     * @Date 0:37 
+     * @Param [user]
+     * @return void
+     **/
+    @Override
+    public void identify(User user) {
+        mongoTemplate.updateFirst(new Query(Criteria.where("phoneNum").is(user.getPhoneNum()))
+                ,new Update()
+                        .set("status", user.getStatus())
+                        .set("name", user.getName())
+                        .set("idNum", user.getIdNum()),
+                User.class);
+    }
+
+    /**
+     * @Author chenpeng
+     * @Description //TODO 获取状态
+     * @Date 0:37 
+     * @Param [id]
+     * @return int
+     **/
+    @Override
+    public int getStart(String id) {
+        User user = mongoTemplate.findOne(new Query(Criteria.where("id").is(id)), User.class);
+
+        if (user==null){
+            return 0;
+        }
+
+        return user.getStatus();
+    }
+
+    /**
+     * @Author chenpeng
+     * @Description //TODO 充值
+     * @Date 0:58 
+     * @Param [openid, balance, phoneNum]
+     * @return void
+     **/
+    @Override
+    public void recharge(String openid, Integer balance, String phoneNum) {
+        mongoTemplate.updateFirst(new Query(
+                new Criteria().orOperator(
+                        Criteria.where("id").is(openid),
+                        Criteria.where("phoneNum").is(phoneNum))),
+                new Update().inc("deposit", balance), User.class);
+    }
+
+
+}
+```
+
+# 注解以及GeoHash算法
+
+## 1. bean
+
+```
+package com.cp.bicycle.bicycle.bean;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Arrays;
+
+/**
+ * @author chenPeng
+ * @version 1.0.0
+ * @ClassName Bike.java
+ * @Description TODO
+ * @createTime 2019年05月24日 23:35:00
+ */
+@Document(collection = "bikes")
+public class Bike {
+
+    @Id
+    private String id;
+    private Integer status;
+    private String qrCode;
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    private double[] location;
+
+    ....get set 方法
+    ...
+}
+
+```
+1. @Document(collection = "bikes")  
+    代表MongoDB中表名为bikes
+2. @Id      
+    代表为主键
+3.  @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)   
+    建立GeoHash的索引
+4.  @Indexed(unique = true)     
+    建立索引且不为空
+5.  @Transient      
+    表示在表中不创建这个属性
+
+## 2.GeoHash算法使用
+
+```
+
+@Autowired
+    private MongoTemplate mongoTemplate;
+
+@Override
+    public GeoResults<Bike> getBikeNear(double log, double lat) {
+        NearQuery nearQuery = NearQuery.near(log,lat, Metrics.KILOMETERS);
+
+        nearQuery.maxDistance(0.5).query(new Query().addCriteria(Criteria.where("status").is(0)).limit(10));
+
+        GeoResults<Bike> geoResults = mongoTemplate.geoNear(nearQuery, Bike.class);
+
+        return geoResults;
+    }
+
+```

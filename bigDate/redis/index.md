@@ -27,7 +27,8 @@
 9. `ps -ef | grep redis` 查看redis 状态
 10. `redis-cli -h 192.169.1.11` 连接
 11. 关闭 `redis-cli shutdown`  `redis-cli -h 192.169.1.11 shutdown`
-12. 修改密码 
+12. 修改密码    
+    配置文件 requirepass foobared   
     修改： `config set requirepass <password>`
     每次登录：`auth <password>`
 
